@@ -1,3 +1,4 @@
+var memory = null;
 let isSign = (sign) => ("+-/xX%.".indexOf(sign) !== -1 ? true : false);
 var calculated = false;
 let append = (key) => {
@@ -31,4 +32,42 @@ let backSpace = () => {
   } else {
     document.getElementById("display").value = "0";
   }
+};
+
+let memorySave = () => {
+  let result = document.getElementById("display").value;
+  memory = result;
+  // localStorage.setItem("memory", result);
+  // localStorage.getItem();
+  // localStorage.removeItem("memory");
+};
+let memoryRestore = () => {
+  if (memory) {
+    document.getElementById("display").value = memory;
+  }
+};
+
+let memoryCancel = () => {
+  memory = null;
+};
+
+let memoryAdd = () => {
+  let result = document.getElementById("display").value;
+  if (memory) {
+    result = Number(memory) + Number(result);
+  }
+  memory = result;
+};
+
+let memoryMInus = () => {
+  let result = document.getElementById("display").value;
+  if (memory) {
+    result = Number(memory) - Number(result);
+  }
+  memory = result;
+};
+
+let clearAll = () => {
+  document.getElementById("display").value = "0";
+  memory = null;
 };

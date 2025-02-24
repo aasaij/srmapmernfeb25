@@ -13,8 +13,16 @@
         <form action="">
           <input type="text" readonly id="display" value="0" />
           <div class="button-container">
-            <button type="button" onclick="memoryCancel()">MC</button>
-            <button type="button" onclick="memoryRestore()">MR</button>
+            <button type="button" onclick="memoryCancel()" id="btnMemoryCancel">
+              MC
+            </button>
+            <button
+              type="button"
+              onclick="memoryRestore()"
+              id="btnMemoryRestore"
+            >
+              MR
+            </button>
             <button type="button" onclick="memoryAdd()">M+</button>
             <button type="button" onclick="memoryMinus()">M-</button>
             <button type="button" onclick="memorySave()">MS</button>
@@ -42,6 +50,7 @@
         </form>
       </div>
     </div>
+
     <script src="./assets/scripts/calculator.js"></script>
   </body>
 </html>
