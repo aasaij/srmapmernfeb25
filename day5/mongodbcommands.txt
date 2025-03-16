@@ -1,0 +1,76 @@
+test> show dbs
+
+
+test> use srmap
+
+srmap> db.createCollection("employees")
+srmap> db.employees.insertOne({"firstName":"Hemanth", "lastName":"Kumar"})
+
+srmap> db.employees.find()
+
+srmap> show collections
+employees
+
+srmap> db.employees.drop()
+true
+
+
+srmap> db.employees.insertOne({"_id":"123456789", "firstName":"Hemanth", "lastName":"Kumar"})
+
+srmap> db.employees.find()
+
+srmap> db.employees.find().pretty()
+
+srmap> db.employees.insertOne({"_id":"12345567", "firstName":"Samhitha","lastName":"K", "address":{"area":"Mangalagiri", "city":"Vijayawada"}, "salary":9000
+00})
+
+srmap> db.employees.find();
+
+srmap> db.employees.find({},{firstName:1,salary:1})
+
+srmap>db.employees.find({},{_id:0,firstName:1,salary:1})
+
+srmap> db.employees.find({},{"_id":0,firstName:1,salary:1})
+
+srmap> db.employees.find({},{"_id":0,"firstName":1,"salary":1})
+
+srmap> db.employees.find({},{"_id":0,"firstName":1,"salary":1}).sort({"firstName":1})
+
+srmap> db.employees.find({},{"_id":0,"firstName":1,"salary":1}).sort({"firstName":-1})
+
+srmap> db.employees.find({},{"_id":0,"firstName":1,"salary":1}).sort({salary:-1})
+
+srmap> db.employees.find({},{"_id":0,"firstName":1,"salary":1}).sort({salary:-1,firstName:1})
+
+srmap> db.employees.find({},{"_id":0,"firstName":1,"salary":1}).sort({salary:-1,firstName:1}).limit(3)
+
+srmap> db.employees.find().limit(3)
+
+srmap> db.employees.find({salary:{$gt:1000000}})
+
+srmap> db.employees.find({salary:{$gte:1000000}})
+
+
+srmap> db.employees.find({"address.area":"Mangalagiri"})
+
+srmap> db.employees.find({$or : [{"address.area":"Mangalagiri"},{"address.area":"Tadepalli"}]})
+
+srmap> db.employees.find( {"address.area": {$in : ["Mangalagiri","Tadepalli"]}})
+
+srmap> db.employees.find( {"address.area": {$nin : ["Mangalagiri","Tadepalli"]}})
+
+srmap> db.employees.findOne( {"address.area": {$nin : ["Mangalagiri","Tadepalli"]}})
+
+srmap> db.employees.findOne( {"address.area": {$in : ["Mangalagiri","Tadepalli"]}})
+
+srmap> db.employees.deleteOne({})
+
+srmap> db.employees.find();
+
+srmap> db.employees.deleteOne({salary:900000})
+
+srmap> db.employees.deleteMany({salary:900000})
+
+srmap> db.employees.deleteMany({$and:[{"address.area":"Vijayawada"}, {salary:1000000}]})
+
+srmap> db.employees.deleteMany({$and:[{"address.city":"Vijayawada"}, {salary:1000000}]})

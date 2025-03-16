@@ -1,0 +1,783 @@
+Please enter a MongoDB connection string (Default: mongodb://localhost/):
+
+Current Mongosh Log ID: 67d3c79cae38a34252cdcdf5
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.6
+Using MongoDB:          7.0.9
+Using Mongosh:          2.2.6
+mongosh 2.4.2 is available for download: https://www.mongodb.com/try/download/shell
+
+For mongosh info see: https://docs.mongodb.com/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2025-02-27T21:31:10.267+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> use srmap
+switched to db srmap
+srmap> show collections
+employee
+employees
+students
+srmap> db.students.find()
+[
+  {
+    _id: 1,
+    firstName: 'Yuvan',
+    lastname: 'V',
+    cgpa: 10,
+    department: 1
+  },
+  { _id: 2, firstName: 'Anand', lastname: 'R', cgpa: 7, department: 2 },
+  {
+    _id: 3,
+    firstName: 'Madhavan',
+    lastname: 'M',
+    cgpa: 4,
+    department: 3
+  },
+  {
+    _id: 4,
+    firstName: 'Diptendu',
+    lastname: 'J',
+    cgpa: 10,
+    department: 2
+  },
+  { _id: 5, firstName: 'Ashok', lastname: 'J', cgpa: 6, department: 1 },
+  {
+    _id: 6,
+    firstName: 'Sameer',
+    lastname: 'R',
+    cgpa: 8,
+    department: 3
+  }
+]
+srmap> db.students.aggregate(
+... [
+... {$group:{_id:"$department",
+... employeeCount:{$sum:1}}
+... }
+... ]
+... )
+[
+  { _id: 3, employeeCount: 2 },
+  { _id: 2, employeeCount: 2 },
+  { _id: 1, employeeCount: 2 }
+]
+srmap> db.students.find({}, {firstName:1,department:1,_id:0})
+[
+  { firstName: 'Yuvan', department: 1 },
+  { firstName: 'Anand', department: 2 },
+  { firstName: 'Madhavan', department: 3 },
+  { firstName: 'Diptendu', department: 2 },
+  { firstName: 'Ashok', department: 1 },
+  { firstName: 'Sameer', department: 3 }
+]
+srmap> db.students.aggregate( [ {$sort:{department:1}},{ $group: { _id: "$department", employeeCount: { $sum: 1 } } }] )
+[
+  { _id: 3, employeeCount: 2 },
+  { _id: 1, employeeCount: 2 },
+  { _id: 2, employeeCount: 2 }
+]
+srmap> db.students.find().sort({department:1})
+[
+  {
+    _id: 1,
+    firstName: 'Yuvan',
+    lastname: 'V',
+    cgpa: 10,
+    department: 1
+  },
+  { _id: 5, firstName: 'Ashok', lastname: 'J', cgpa: 6, department: 1 },
+  { _id: 2, firstName: 'Anand', lastname: 'R', cgpa: 7, department: 2 },
+  {
+    _id: 4,
+    firstName: 'Diptendu',
+    lastname: 'J',
+    cgpa: 10,
+    department: 2
+  },
+  {
+    _id: 3,
+    firstName: 'Madhavan',
+    lastname: 'M',
+    cgpa: 4,
+    department: 3
+  },
+  {
+    _id: 6,
+    firstName: 'Sameer',
+    lastname: 'R',
+    cgpa: 8,
+    department: 3
+  }
+]
+srmap> db.students.find({}, {firstName:1, department:1}).sort({department:1})
+[
+  { _id: 1, firstName: 'Yuvan', department: 1 },
+  { _id: 5, firstName: 'Ashok', department: 1 },
+  { _id: 2, firstName: 'Anand', department: 2 },
+  { _id: 4, firstName: 'Diptendu', department: 2 },
+  { _id: 3, firstName: 'Madhavan', department: 3 },
+  { _id: 6, firstName: 'Sameer', department: 3 }
+]
+srmap> db.students.find({}, {firstName:1, department:1}).sort({department:-1})
+[
+  { _id: 3, firstName: 'Madhavan', department: 3 },
+  { _id: 6, firstName: 'Sameer', department: 3 },
+  { _id: 2, firstName: 'Anand', department: 2 },
+  { _id: 4, firstName: 'Diptendu', department: 2 },
+  { _id: 1, firstName: 'Yuvan', department: 1 },
+  { _id: 5, firstName: 'Ashok', department: 1 }
+]
+srmap> db.students.aggregate( [ {$sort:{department:1}}])
+[
+  {
+    _id: 1,
+    firstName: 'Yuvan',
+    lastname: 'V',
+    cgpa: 10,
+    department: 1
+  },
+  { _id: 5, firstName: 'Ashok', lastname: 'J', cgpa: 6, department: 1 },
+  { _id: 2, firstName: 'Anand', lastname: 'R', cgpa: 7, department: 2 },
+  {
+    _id: 4,
+    firstName: 'Diptendu',
+    lastname: 'J',
+    cgpa: 10,
+    department: 2
+  },
+  {
+    _id: 3,
+    firstName: 'Madhavan',
+    lastname: 'M',
+    cgpa: 4,
+    department: 3
+  },
+  {
+    _id: 6,
+    firstName: 'Sameer',
+    lastname: 'R',
+    cgpa: 8,
+    department: 3
+  }
+]
+srmap> db.students.aggregate( [
+... {$sort:{department:1}},
+... {$group:{_id:"$department",
+... totalStudents:{$sum:1}}}
+... ]
+... )
+[
+  { _id: 3, totalStudents: 2 },
+  { _id: 1, totalStudents: 2 },
+  { _id: 2, totalStudents: 2 }
+]
+srmap> db.students.aggregate([{ $group: { _id: "$department", totalStudents: { $sum: 1 } } }] )
+[
+  { _id: 3, totalStudents: 2 },
+  { _id: 2, totalStudents: 2 },
+  { _id: 1, totalStudents: 2 }
+]
+srmap> db.students.find({}, {firstName:1, department:1}).sort({department:-1})
+[
+  { _id: 3, firstName: 'Madhavan', department: 3 },
+  { _id: 6, firstName: 'Sameer', department: 3 },
+  { _id: 2, firstName: 'Anand', department: 2 },
+  { _id: 4, firstName: 'Diptendu', department: 2 },
+  { _id: 1, firstName: 'Yuvan', department: 1 },
+  { _id: 5, firstName: 'Ashok', department: 1 }
+]
+
+srmap> db.students.find({gender:"Female"})
+[
+  {
+    _id: 3,
+    firstName: 'Madhu',
+    lastname: 'M',
+    cgpa: 4,
+    department: 3,
+    gender: 'Female'
+  },
+  {
+    _id: 5,
+    firstName: 'Sameera',
+    lastname: 'J',
+    cgpa: 6,
+    department: 1,
+    gender: 'Female'
+  }
+]
+srmap> db.students.aggregate(
+... [
+... {$match:{gender:"Male"}},
+... {$group:{_id:"$department",
+... highestScore:{$max:"$cgpa"},
+... lowScore:{$min:"$cgpa"},
+... totalStudents:{$sum:1}},
+... {$match:{totalStudents:{$gt:2}}}
+Uncaught:
+SyntaxError: Unexpected token (8:0)
+
+  6 | lowScore:{$min:"$cgpa"},
+  7 | totalStudents:{$sum:1}},
+> 8 | {$match:{totalStudents:{$gt:2}}}
+    | ^
+  9 |
+
+srmap> db.students.aggregate( [ {$match:{gender:"Male"}}, {$group:{_id:"$department", highestScore:{$max:"$cgpa"}, lowScore:{$min:"$cgpa"}, totalStudents:{$sum:1}}, {$match:{totalStudents:{$gt:2}}}])
+Uncaught:
+SyntaxError: Unexpected token (1:158)
+
+> 1 | db.students.aggregate( [ {$match:{gender:"Male"}}, {$group:{_id:"$department", highestScore:{$max:"$cgpa"}, lowScore:{$min:"$cgpa"}, totalStudents:{$sum:1}}, {$match:{totalStudents:{$gt:2}}}])
+    |
+        ^
+  2 |
+
+srmap> db.students.aggregate( [ {$match:{gender:"Male"}}, {$group:{_id:"$department", highestScore:{$max:"$cgpa"}, lowScore:{$min:"$cgpa"}, totalStudents:{$sum:1}}}, {$match:{totalStudents:{$gt:2}}}])
+
+srmap> db.students.aggregate( [ {$match:{gender:"Male"}}, {$group:{_id:"$department", highestScore:{$max:"$cgpa"}, lowScore:{$min:"$cgpa"}, totalStudents:{$sum:1}}}, {$match:{totalStudents:{$gte:2}}}])
+[
+  { _id: 3, highestScore: 10, lowScore: 8, totalStudents: 2 },
+  { _id: 2, highestScore: 10, lowScore: 7, totalStudents: 2 }
+]
+srmap> db.students.find({gender:"Male"})
+[
+  {
+    _id: 1,
+    firstName: 'Yuvan',
+    lastname: 'V',
+    cgpa: 10,
+    department: 1,
+    gender: 'Male'
+  },
+  {
+    _id: 2,
+    firstName: 'Anand',
+    lastname: 'R',
+    cgpa: 7,
+    department: 2,
+    gender: 'Male'
+  },
+  {
+    _id: 4,
+    firstName: 'Diptendu',
+    lastname: 'J',
+    cgpa: 10,
+    department: 2,
+    gender: 'Male'
+  },
+  {
+    _id: 6,
+    firstName: 'Sameer',
+    lastname: 'R',
+    cgpa: 8,
+    department: 3,
+    gender: 'Male'
+  },
+  {
+    _id: 7,
+    firstName: 'AAA',
+    lastname: 'J',
+    cgpa: 10,
+    department: 3,
+    gender: 'Male'
+  }
+]
+srmap> db.students.find({gender:"Male"}, {firstName:1,department:1,gender:1})
+[
+  { _id: 1, firstName: 'Yuvan', department: 1, gender: 'Male' },
+  { _id: 2, firstName: 'Anand', department: 2, gender: 'Male' },
+  { _id: 4, firstName: 'Diptendu', department: 2, gender: 'Male' },
+  { _id: 6, firstName: 'Sameer', department: 3, gender: 'Male' },
+  { _id: 7, firstName: 'AAA', department: 3, gender: 'Male' }
+]
+srmap> db.students.aggregate(
+... [
+... {highestScore:{$max:"$cgpa"}}
+... ])
+MongoServerError[Location40324]: Unrecognized pipeline stage name: 'highestScore'
+srmap> db.students.aggregate(
+... [
+... {$group:{highestScore:{$max:"$cgpa"}}}
+... ])
+MongoServerError[Location15955]: a group specification must include an _id
+srmap> db.students.aggregate(
+... [
+... {$group:{_id:"$cgpa",
+... highestScore:{$max:"$cgpa"}}}
+... ])
+[
+  { _id: 7, highestScore: 7 },
+  { _id: 4, highestScore: 4 },
+  { _id: 8, highestScore: 8 },
+  { _id: 10, highestScore: 10 },
+  { _id: 6, highestScore: 6 }
+]
+srmap> db.students.aggregate(
+... [
+... {$sort:{cgpa:-1}}])
+[
+  {
+    _id: 1,
+    firstName: 'Yuvan',
+    lastname: 'V',
+    cgpa: 10,
+    department: 1,
+    gender: 'Male'
+  },
+  {
+    _id: 4,
+    firstName: 'Diptendu',
+    lastname: 'J',
+    cgpa: 10,
+    department: 2,
+    gender: 'Male'
+  },
+  {
+    _id: 7,
+    firstName: 'AAA',
+    lastname: 'J',
+    cgpa: 10,
+    department: 3,
+    gender: 'Male'
+  },
+  {
+    _id: 6,
+    firstName: 'Sameer',
+    lastname: 'R',
+    cgpa: 8,
+    department: 3,
+    gender: 'Male'
+  },
+  {
+    _id: 2,
+    firstName: 'Anand',
+    lastname: 'R',
+    cgpa: 7,
+    department: 2,
+    gender: 'Male'
+  },
+  {
+    _id: 5,
+    firstName: 'Sameera',
+    lastname: 'J',
+    cgpa: 6,
+    department: 1,
+    gender: 'Female'
+  },
+  {
+    _id: 3,
+    firstName: 'Madhu',
+    lastname: 'M',
+    cgpa: 4,
+    department: 3,
+    gender: 'Female'
+  }
+]
+srmap> db.students.aggregate( [
+... {$sort:{cgpa:-1}},
+... {$project:{firstName:1,cgpa:1, _id:0,gender:1}}
+... ]
+... )
+[
+  { firstName: 'Yuvan', cgpa: 10, gender: 'Male' },
+  { firstName: 'Diptendu', cgpa: 10, gender: 'Male' },
+  { firstName: 'AAA', cgpa: 10, gender: 'Male' },
+  { firstName: 'Sameer', cgpa: 8, gender: 'Male' },
+  { firstName: 'Anand', cgpa: 7, gender: 'Male' },
+  { firstName: 'Sameera', cgpa: 6, gender: 'Female' },
+  { firstName: 'Madhu', cgpa: 4, gender: 'Female' }
+]
+srmap> db.students.aggregate([
+... {$sort:{cgpa:-1}},
+... {$limit:1},
+... {$project:{firstName:1,cgpa:1,_id:0, gender:1}}
+... ])
+[ { firstName: 'Yuvan', cgpa: 10, gender: 'Male' } ]
+srmap>  db.students.aggregate(
+... ... [
+... ... {$group:{_id:"$cgpa",
+... ... highestScore:{$max:"$cgpa"}}}
+Uncaught:
+SyntaxError: Unexpected token, expected "," (4:16)
+
+  2 | ... [
+  3 | ... {$group:{_id:"$cgpa",
+> 4 | ... highestScore:{$max:"$cgpa"}}}
+    |                 ^
+  5 |
+
+srmap> db.students.aggregate(
+... [
+... {$group:{_id:"$cgpa",
+... highestScore:{$max:"$cgpa"}}},
+... :
+Uncaught:
+SyntaxError: Unexpected token (5:0)
+
+  3 | {$group:{_id:"$cgpa",
+  4 | highestScore:{$max:"$cgpa"}}},
+> 5 | :
+    | ^
+  6 |
+
+srmap> db.students.aggregate(
+... [{$group:{_id:"$cgpa"}},
+... {$sort:{_id:-1}},
+... {$limit:1}
+... ])
+[ { _id: 10 } ]
+srmap> db.students.aggregate( [{ $group: { _id: "$cgpa" } }, { $sort: { _id: -1 } }, { $limit: 1 }, {$project:{firstName:1,cgpa:1}}] )
+[ { _id: 10 } ]
+srmap> db.students.aggregate(
+... [
+... {$sort:{cgpa:-1}},
+... {$skip:1},
+... {$limit:1}
+... ])
+[
+  {
+    _id: 1,
+    firstName: 'Yuvan',
+    lastname: 'V',
+    cgpa: 10,
+    department: 1,
+    gender: 'Male'
+  }
+]
+srmap> db.students.find({}, {firstName:1, cgpa:1})
+[
+  { _id: 1, firstName: 'Yuvan', cgpa: 10 },
+  { _id: 2, firstName: 'Anand', cgpa: 7 },
+  { _id: 3, firstName: 'Madhu', cgpa: 4 },
+  { _id: 4, firstName: 'Diptendu', cgpa: 10 },
+  { _id: 5, firstName: 'Sameera', cgpa: 6 },
+  { _id: 6, firstName: 'Sameer', cgpa: 8 },
+  { _id: 7, firstName: 'AAA', cgpa: 10 }
+]
+srmap> db.students.aggregate(
+... [
+... {$group:{_id:"$cgpa"}},
+... {$sort:{_id:-1}},
+... {$skip:1},
+... {$limit:1}
+... ])
+[ { _id: 8 } ]
+srmap> db.students.aggregate(
+... [
+... {$sort:{cgpa:-1}},
+... {$group:{_id:"$cgpa"}},
+... {}]);
+MongoServerError[Location40323]: A pipeline stage specification object must contain exactly one field.
+srmap> db.students.aggregate( [ { $sort: { cgpa: -1 } }, { $group: { _id: "$cgpa" } }]);
+[ { _id: 10 }, { _id: 6 }, { _id: 7 }, { _id: 4 }, { _id: 8 } ]
+srmap> db.students.aggregate(
+... [
+... {$group:{_id:"$cgpa",
+... studentList:{$push:"
+Uncaught:
+SyntaxError: Unterminated string constant. (4:19)
+
+  2 | [
+  3 | {$group:{_id:"$cgpa",
+> 4 | studentList:{$push:"
+    |                    ^
+  5 |
+
+srmap> db.students.aggregate(
+... [
+... {$group:{_id:"$cgpa",
+... studentList:{$push:"$$ROOT"}}},
+... {$sort:{_id:-1}},
+... {$skip:1},
+... {$limit:1},
+... {$unwind:"$studentList"},
+... {$replaceRoot:{newRoot:"$studentList"}}]
+... )
+[
+  {
+    _id: 6,
+    firstName: 'Sameer',
+    lastname: 'R',
+    cgpa: 8,
+    department: 3,
+    gender: 'Male'
+  }
+]
+srmap> db.students.aggregate( [ { $group: { _id: "$cgpa", studentList: { $push: "$$ROOT" } } }, { $sort: { _id: -1 } }, { $skip: 1 }, { $limit: 1 }, { $unwind: "$studentList" }, { $replaceRoot: { newRoot: "$studentList" } }, {$project:{firstName:1,cgpa:1}}] )
+[ { _id: 6, firstName: 'Sameer', cgpa: 8 } ]
+srmap> db.students.find()
+[
+  {
+    _id: 1,
+    firstName: 'Yuvan',
+    lastname: 'V',
+    cgpa: 10,
+    department: 101,
+    gender: 'Male'
+  },
+  {
+    _id: 2,
+    firstName: 'Anand',
+    lastname: 'R',
+    cgpa: 7,
+    department: 101,
+    gender: 'Male'
+  },
+  {
+    _id: 3,
+    firstName: 'Madhu',
+    lastname: 'M',
+    cgpa: 4,
+    department: 103,
+    gender: 'Female'
+  },
+  {
+    _id: 4,
+    firstName: 'Diptendu',
+    lastname: 'J',
+    cgpa: 10,
+    department: 103,
+    gender: 'Male'
+  },
+  {
+    _id: 5,
+    firstName: 'Sameera',
+    lastname: 'J',
+    cgpa: 6,
+    department: 102,
+    gender: 'Female'
+  },
+  {
+    _id: 6,
+    firstName: 'Sameer',
+    lastname: 'R',
+    cgpa: 8,
+    department: 102,
+    gender: 'Male'
+  },
+  {
+    _id: 7,
+    firstName: 'AAA',
+    lastname: 'J',
+    cgpa: 10,
+    department: 103,
+    gender: 'Male'
+  }
+]
+srmap> db.students.find({}, {firstName:1, cgpa:1, department:1})
+[
+  { _id: 1, firstName: 'Yuvan', cgpa: 10, department: 101 },
+  { _id: 2, firstName: 'Anand', cgpa: 7, department: 101 },
+  { _id: 3, firstName: 'Madhu', cgpa: 4, department: 103 },
+  { _id: 4, firstName: 'Diptendu', cgpa: 10, department: 103 },
+  { _id: 5, firstName: 'Sameera', cgpa: 6, department: 102 },
+  { _id: 6, firstName: 'Sameer', cgpa: 8, department: 102 },
+  { _id: 7, firstName: 'AAA', cgpa: 10, department: 103 }
+]
+srmap> db.departments.find()
+[
+  { _id: 101, dname: 'Computer Science', hod: 'Biswadeep' },
+  { _id: 102, dname: 'Cloud Computing', hod: 'Neha' },
+  { _id: 103, dname: 'Artificial Intelligence', hod: 'Rohini' }
+]
+srmap> db.students.aggregate(
+... [
+... {$lookup:{
+... from:"departments",
+... localField:"department",
+... foreignField:"_id",
+... as:"departmentDetails"
+... }
+... }])
+[
+  {
+    _id: 1,
+    firstName: 'Yuvan',
+    lastname: 'V',
+    cgpa: 10,
+    department: 101,
+    gender: 'Male',
+    departmentDetails: [ { _id: 101, dname: 'Computer Science', hod: 'Biswadeep' } ]
+  },
+  {
+    _id: 2,
+    firstName: 'Anand',
+    lastname: 'R',
+    cgpa: 7,
+    department: 101,
+    gender: 'Male',
+    departmentDetails: [ { _id: 101, dname: 'Computer Science', hod: 'Biswadeep' } ]
+  },
+  {
+    _id: 3,
+    firstName: 'Madhu',
+    lastname: 'M',
+    cgpa: 4,
+    department: 103,
+    gender: 'Female',
+    departmentDetails: [ { _id: 103, dname: 'Artificial Intelligence', hod: 'Rohini' } ]
+  },
+  {
+    _id: 4,
+    firstName: 'Diptendu',
+    lastname: 'J',
+    cgpa: 10,
+    department: 103,
+    gender: 'Male',
+    departmentDetails: [ { _id: 103, dname: 'Artificial Intelligence', hod: 'Rohini' } ]
+  },
+  {
+    _id: 5,
+    firstName: 'Sameera',
+    lastname: 'J',
+    cgpa: 6,
+    department: 102,
+    gender: 'Female',
+    departmentDetails: [ { _id: 102, dname: 'Cloud Computing', hod: 'Neha' } ]
+  },
+  {
+    _id: 6,
+    firstName: 'Sameer',
+    lastname: 'R',
+    cgpa: 8,
+    department: 102,
+    gender: 'Male',
+    departmentDetails: [ { _id: 102, dname: 'Cloud Computing', hod: 'Neha' } ]
+  },
+  {
+    _id: 7,
+    firstName: 'AAA',
+    lastname: 'J',
+    cgpa: 10,
+    department: 103,
+    gender: 'Male',
+    departmentDetails: [ { _id: 103, dname: 'Artificial Intelligence', hod: 'Rohini' } ]
+  }
+]
+srmap> db.students.aggregate( [ { $lookup: { from: "departments", localField: "department", foreignField: "_id", as: "departmentDetails" } }, {$unwind:"$departmentDetails"}])
+[
+  {
+    _id: 1,
+    firstName: 'Yuvan',
+    lastname: 'V',
+    cgpa: 10,
+    department: 101,
+    gender: 'Male',
+    departmentDetails: { _id: 101, dname: 'Computer Science', hod: 'Biswadeep' }
+  },
+  {
+    _id: 2,
+    firstName: 'Anand',
+    lastname: 'R',
+    cgpa: 7,
+    department: 101,
+    gender: 'Male',
+    departmentDetails: { _id: 101, dname: 'Computer Science', hod: 'Biswadeep' }
+  },
+  {
+    _id: 3,
+    firstName: 'Madhu',
+    lastname: 'M',
+    cgpa: 4,
+    department: 103,
+    gender: 'Female',
+    departmentDetails: { _id: 103, dname: 'Artificial Intelligence', hod: 'Rohini' }
+  },
+  {
+    _id: 4,
+    firstName: 'Diptendu',
+    lastname: 'J',
+    cgpa: 10,
+    department: 103,
+    gender: 'Male',
+    departmentDetails: { _id: 103, dname: 'Artificial Intelligence', hod: 'Rohini' }
+  },
+  {
+    _id: 5,
+    firstName: 'Sameera',
+    lastname: 'J',
+    cgpa: 6,
+    department: 102,
+    gender: 'Female',
+    departmentDetails: { _id: 102, dname: 'Cloud Computing', hod: 'Neha' }
+  },
+  {
+    _id: 6,
+    firstName: 'Sameer',
+    lastname: 'R',
+    cgpa: 8,
+    department: 102,
+    gender: 'Male',
+    departmentDetails: { _id: 102, dname: 'Cloud Computing', hod: 'Neha' }
+  },
+  {
+    _id: 7,
+    firstName: 'AAA',
+    lastname: 'J',
+    cgpa: 10,
+    department: 103,
+    gender: 'Male',
+    departmentDetails: { _id: 103, dname: 'Artificial Intelligence', hod: 'Rohini' }
+  }
+]
+srmap> db.students.aggregate(
+... [
+... {$lookup:
+...    {
+...      from:"departments",
+...      localField:"department",
+...      foreignField:"_id",
+...      as:"departmentDetails"
+...    }
+... },
+... {$unwind:"$departmentDetails"},
+... {$project:{firstName:1, cgpa:1, "departmentDetails.dname":1,"departmentDetails.hod":1}}
+... ])
+[
+  {
+    _id: 1,
+    firstName: 'Yuvan',
+    cgpa: 10,
+    departmentDetails: { dname: 'Computer Science', hod: 'Biswadeep' }
+  },
+  {
+    _id: 2,
+    firstName: 'Anand',
+    cgpa: 7,
+    departmentDetails: { dname: 'Computer Science', hod: 'Biswadeep' }
+  },
+  {
+    _id: 3,
+    firstName: 'Madhu',
+    cgpa: 4,
+    departmentDetails: { dname: 'Artificial Intelligence', hod: 'Rohini' }
+  },
+  {
+    _id: 4,
+    firstName: 'Diptendu',
+    cgpa: 10,
+    departmentDetails: { dname: 'Artificial Intelligence', hod: 'Rohini' }
+  },
+  {
+    _id: 5,
+    firstName: 'Sameera',
+    cgpa: 6,
+    departmentDetails: { dname: 'Cloud Computing', hod: 'Neha' }
+  },
+  {
+    _id: 6,
+    firstName: 'Sameer',
+    cgpa: 8,
+    departmentDetails: { dname: 'Cloud Computing', hod: 'Neha' }
+  },
+  {
+    _id: 7,
+    firstName: 'AAA',
+    cgpa: 10,
+    departmentDetails: { dname: 'Artificial Intelligence', hod: 'Rohini' }
+  }
+]
+srmap>
