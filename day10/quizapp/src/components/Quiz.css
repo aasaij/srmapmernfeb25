@@ -1,0 +1,52 @@
+.quiz-box {
+  max-width: 400px;
+  margin: auto;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.option-btn {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #8ecae6;
+  color: white;
+  cursor: pointer;
+}
+
+.option-btn:hover {
+  background: #219ebc;
+}
+
+.correct {
+  background-color: #00b894 !important;
+}
+
+.wrong {
+  background-color: #d63031 !important;
+}
+
+.disabled {
+  background-color: #b2bec3;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.timer {
+  color: #fb8500;
+  font-weight: bold;
+  margin-bottom: 10px;
+}

@@ -1,0 +1,24 @@
+{
+  "todolist": [
+    {
+      "id": 1,
+      "task": "Learn React Native",
+      "completed": false
+    },
+    {
+      "id": 2,
+      "task": "Learn React",
+      "completed": true
+    },
+    {
+      "id": 3,
+      "task": "Thank to everyone for listening the class",
+      "completed": false
+    },
+    {
+      "id": 4,
+      "task": "Listen the react class",
+      "completed": false
+    }
+  ]
+}
